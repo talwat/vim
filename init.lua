@@ -1,6 +1,9 @@
-vim.g.mapleader = ","
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
 require("config.lazy")
+require("mason").setup()
+require('lualine').setup()
 
 vim.cmd.colorscheme "catppuccin"
 vim.opt.tabstop = 2
@@ -33,6 +36,46 @@ vim.opt.smartcase =true
 vim.opt.termguicolors = true
 vim.opt.showmode = false
 
--- No automatic comment insertion
-vim.cmd([[autocmd FileType * set formatoptions-=ro]])
+-- Keymaps
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<C-f>', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+
+-- Error Lens
+vim.diagnostic.config({
+  virtual_text = {
+    spacing = 1,
+    prefix = function(diagnostic)
+      if diagnostic.severity == vim.diagnostic.severity.ERROR then
+        return ""
+      elseif diagnostic.severity == vim.diagnostic.severity.WARN then
+        return ""
+      elseif diagnostic.severity == vim.diagnostic.severity.INFO then
+        return ""
+      else
+        return "" -- HINT or fallback
+      end
+    end,
+  },
+  signs = {
+    text = {
+        [vim.diagnostic.severity.ERROR] = '',
+        [vim.diagnostic.severity.WARN] = '',
+        [vim.diagnostic.severity.HINT] = '',
+        [vim.diagnostic.severity.INFO] = '',
+    },
+    linehl = {
+        [vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+    },
+    numhl = {
+        [vim.diagnostic.severity.WARN] = 'WarningMsg',
+    },
+  },
+  underline = true,
+  update_in_insert = false,
+  severity_sort = true,
+})
 
